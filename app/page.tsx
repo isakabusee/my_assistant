@@ -1,69 +1,227 @@
-import Image from "next/image";
+
+"use client";
+
+import { useState } from "react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import {
+  ArrowUp,
+  Bot,
+  LoaderCircle,
+  Sparkles,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+
+const suggestions = [
+  "What technologies does Isaac know?",
+  "Tell me about the Memories Project",
+  "What is Isaac's backend experience?",
+  "How has Isaac used AWS Lambda?",
+];
 
 export default function Home() {
+  const [input, setInput] = useState("");
+
+  const { messages, sendMessage, status, error } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+    }),
+  });
+
+  const isBusy =
+    status === "submitted" || status === "streaming";
+
+  function submitMessage(text: string) {
+    const trimmed = text.trim();
+
+    if (!trimmed || isBusy) return;
+
+    sendMessage({ text: trimmed });
+    setInput("");
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <main className="min-h-screen bg-slate-50 text-slate-950">
+      <header className="border-b bg-white">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
+          <a href="/" className="font-bold tracking-tight">
+            Isaac Busee's AI assistant
+          </a>
+
+          <nav className="flex items-center gap-3">
+            <a
+              href="https://linkedin.com/in/isaac-busee"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Isaac's LinkedIn"
+            >
+              {/* <Linkedin className="size-5" /> */}
+            </a>
+            <a
+              href="https://github.com/isakabusee"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Isaac's GitHub"
+            >
+              {/* <Github className="size-5" /> */}
+            </a>
+          </nav>
+        </div>
+      </header>
+
+      <section className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-slate-900 text-white">
+            <Bot className="size-7" />
+          </div>
+
+          <p className="mb-2 text-sm font-medium text-slate-500">
+            AI-POWERED PORTFOLIO
+          </p>
+
+          <h1 className="text-3xl font-bold tracking-tight sm:text-5xl">
+            Get to know Isaac.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="mx-auto mt-4 max-w-xl text-slate-600">
+            Ask questions about Isaac's software engineering
+            skills, projects, experience, and technical background.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        <Card className="overflow-hidden border-slate-200 shadow-sm">
+          <CardHeader className="border-b bg-white">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Sparkles className="size-5" />
+              Portfolio Assistant
+            </CardTitle>
+            <CardDescription>
+              Answers are based on Isaac's portfolio information.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="space-y-5 p-4 sm:p-6">
+            {messages.length === 0 ? (
+              <div className="py-4">
+                <h2 className="mb-3 font-semibold">
+                  What would you like to know?
+                </h2>
+
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {suggestions.map((suggestion) => (
+                    <Button
+                      key={suggestion}
+                      type="button"
+                      variant="outline"
+                      className="h-auto min-h-12 justify-start whitespace-normal px-3 py-3 text-left"
+                      onClick={() => submitMessage(suggestion)}
+                      disabled={isBusy}
+                    >
+                      {suggestion}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div
+                className="max-h-[480px] space-y-5 overflow-y-auto"
+                aria-live="polite"
+                aria-relevant="additions text"
+              >
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={
+                      message.role === "user"
+                        ? "ml-auto max-w-[90%] rounded-2xl bg-slate-900 p-4 text-white"
+                        : "mr-auto max-w-[95%] rounded-2xl bg-slate-100 p-4"
+                    }
+                  >
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide opacity-60">
+                      {message.role === "user" ? "You" : "Isaac's AI"}
+                    </p>
+
+                    {message.parts.map((part, index) =>
+                      part.type === "text" ? (
+                        <p
+                          key={`${message.id}-${index}`}
+                          className="whitespace-pre-wrap break-words text-sm leading-7"
+                        >
+                          {part.text}
+                        </p>
+                      ) : null,
+                    )}
+                  </div>
+                ))}
+
+                {isBusy && (
+                  <div
+                    className="flex items-center gap-2 text-sm text-slate-500"
+                    role="status"
+                  >
+                    <LoaderCircle className="size-4 animate-spin" />
+                    Isaac's assistant is thinking...
+                  </div>
+                )}
+              </div>
+            )}
+
+            {error && (
+              <p role="alert" className="text-sm text-red-600">
+                Something went wrong. Please try again.
+              </p>
+            )}
+
+            <form
+              className="flex items-center gap-2 border-t pt-4"
+              onSubmit={(event) => {
+                event.preventDefault();
+                submitMessage(input);
+              }}
+            >
+              <Input
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                placeholder="Ask about skills, projects, experience..."
+                aria-label="Ask Isaac's portfolio assistant"
+                disabled={isBusy}
+                maxLength={2000}
+              />
+
+              <Button
+                type="submit"
+                size="icon"
+                aria-label="Send message"
+                disabled={!input.trim() || isBusy}
+              >
+                {isBusy ? (
+                  <LoaderCircle className="size-4 animate-spin" />
+                ) : (
+                  <ArrowUp className="size-4" />
+                )}
+              </Button>
+            </form>
+
+            {/* <p className="text-center text-xs text-slate-500">
+              AI-generated answers may be inaccurate. Verify
+              important details against the resume.
+            </p> */}
+          </CardContent>
+        </Card>
+
+        <footer className="mt-6 text-center text-sm text-slate-500">
+          Built with Next.js, Vercel AI SDK, Tailwind CSS, and shadcn/ui.
+        </footer>
+      </section>
+    </main>
   );
 }
