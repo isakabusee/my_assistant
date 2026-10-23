@@ -6,9 +6,9 @@ import {
   createUIMessageStreamResponse,
   type UIMessage,
 } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { portfolio } from "@/lib/resume";
 
+import { createOpenAI } from "@ai-sdk/openai";
+import { portfolio } from "@/lib/resume";
 
 export const maxDuration = 30;
 
@@ -42,48 +42,73 @@ ${JSON.stringify(portfolio, null, 2)}
 `;
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const messages = body.messages as UIMessage[] | undefined;
+  try {
+    // Read the API key from the server environment.
+    const apiKey = process.env.OPENAI_API_KEY;
 
-  if (!Array.isArray(messages) || messages.length === 0) {
+    if (!apiKey) {
+      console.error("OPENAI_API_KEY is not configured.");
+
+      return Response.json(
+        { error: "The AI service is not configured." },
+        { status: 500 },
+      );
+    }
+
+    // Explicitly pass the API key to the provider.
+    const openai = createOpenAI({
+      apiKey: apiKey,
+    });
+
+    const body = await req.json();
+    const messages = body.messages as UIMessage[] | undefined;
+
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return Response.json(
+        { error: "A conversation message is required." },
+        { status: 400 },
+      );
+    }
+
+    if (JSON.stringify(messages).length > 30_000) {
+      return Response.json(
+        { error: "The conversation is too long. Start a new chat." },
+        { status: 413 },
+      );
+    }
+
+    const validMessages = messages.every(
+      (message) =>
+        message &&
+        (message.role === "user" ||
+          message.role === "assistant") &&
+        Array.isArray(message.parts),
+    );
+
+    if (!validMessages) {
+      return Response.json(
+        { error: "Invalid conversation format." },
+        { status: 400 },
+      );
+    }
+
+    const result = streamText({
+      model: openai("gpt-4o-mini"),
+      system: systemPrompt,
+      messages: await convertToModelMessages(messages),
+      maxOutputTokens: 700,
+      abortSignal: req.signal,
+    });
+
+    return createUIMessageStreamResponse({
+      stream: toUIMessageStream({ stream: result.stream }),
+    });
+  } catch (error) {
+    console.error("Portfolio chat request failed:", error);
+
     return Response.json(
-      { error: "A conversation message is required." },
-      { status: 400 },
+      { error: "Unable to answer right now. Please try again." },
+      { status: 500 },
     );
   }
-
-  // Bound request size to reduce abuse and excessive model costs.
-  if (JSON.stringify(messages).length > 30_000) {
-    return Response.json(
-      { error: "The conversation is too long. Start a new chat." },
-      { status: 413 },
-    );
-  }
-
-  // Only accept valid user/assistant message turns.
-  const validMessages = messages.every(
-    (message) =>
-      message &&
-      (message.role === "user" || message.role === "assistant") &&
-      Array.isArray(message.parts),
-  );
-
-  if (!validMessages) {
-    return Response.json(
-      { error: "Invalid conversation format." },
-      { status: 400 },
-    );
-  }
-
-  const result = streamText({
-    model: openai("gpt-4o-mini"),
-    system: systemPrompt,
-    messages: await convertToModelMessages(messages),
-    maxOutputTokens: 700,
-    abortSignal: req.signal,
-  });
-
-  return createUIMessageStreamResponse({
-    stream: toUIMessageStream({ stream: result.stream }),
-  });
 }

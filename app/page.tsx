@@ -85,7 +85,7 @@ export default function Home() {
           </div>
 
           <p className="mb-2 text-sm font-medium text-slate-500">
-            AI-POWERED PORTFOLIO
+            MY PORTFOLIO ASSISTANT
           </p>
 
           <h1 className="text-3xl font-bold tracking-tight sm:text-5xl">
