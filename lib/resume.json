@@ -1,0 +1,180 @@
+{
+  "name": "ISAAC BUSEE",
+  "title": "Software Engineer",
+  "contact": {
+    "email": "isakabusee@gmail.com",
+    "phone": "(320)-469-7268",
+    "linkedin": "https://linkedin.com/in/isaac-busee",
+    "github": "https://github.com/isakabusee"
+  },
+  "careerSummary": "A professional individual with over seven years of software development. Innovative and passionate about web design, adaptation, and maintenance. Hard worker, fast learner, and a team player who is proficient in a variety of multimedia web tools and scripting languages. Currently seeking opportunities in front-end and back-end web development roles.",
+  "technicalSkills": {
+    "languages": [
+      "JavaScript",
+      "Python",
+      "Java",
+      "TypeScript",
+      "HTML",
+      "CSS",
+      "JSON",
+      "API"
+    ],
+    "frameworksAndLibraries": [
+      "Material-UI",
+      "Bootstrap",
+      "Django",
+      "Node.js",
+      "ExpressJS",
+      "React",
+      "Vite",
+      "Next.js",
+      "React Native",
+      "Expo CLI",
+      "React hooks",
+      "JQuery",
+      "AJAX",
+      "JSP",
+      "EJS",
+      "DOM",
+      "RESTful APIs",
+      "Mongoose",
+      "BCrypt"
+    ],
+    "databases": [
+      "MySQL",
+      "NoSQL",
+      "MongoDB",
+      "Oracle SQL"
+    ],
+    "toolsAndPlatforms": [
+      "Git",
+      "Postman",
+      "GitHub Copilot",
+      "AWS",
+      "AWS S3",
+      "AWS Lambda",
+      "CI/CD",
+      "Continuous Deployment and Integration",
+      "Deployment",
+      "React Router DOM",
+      "Axios"
+    ]
+  },
+  "projects": [
+    {
+      "name": "Buy and Selling Platform",
+      "projectName": "Shambalink",
+      "year": 2025,
+      "technology": [
+        "TypeScript",
+        "Node.js",
+        "ExpressJS",
+        "MongoDB",
+        "React",
+        "Vite",
+        "PayPal",
+        "Stripe"
+      ],
+      "description": "Built a full-stack application to connect vendors and buyers.",
+      "highlights": [
+        "Leveraged GitHub Copilot to build server-side applications with Node.js, Mongoose, and Express to create reusable APIs for server-side rendering.",
+        "Leveraged React with Vite to build a modern, high-performing, scalable, and interactive UI application.",
+        "Implemented built-in React hooks such as useState, useReducer, useEffect, and useContext to build a scalable application.",
+        "Integrated third-party payment gateway APIs such as PayPal and Stripe for in-app transactions."
+      ]
+    },
+    {
+      "name": "E-commerce App MERN",
+      "year": 2023,
+      "technology": [
+        "JavaScript",
+        "ReactJS",
+        "Node.js",
+        "ExpressJS",
+        "MongoDB",
+        "AWS",
+        "PayPal",
+        "Stripe"
+      ],
+      "description": "Engineered a scalable application to connect buyers and vendors.",
+      "highlights": [
+        "Used ReactJS for the UI and Node.js with Express to build a scalable full-stack application.",
+        "Implemented useContext and useReducer hooks to manage state and send complex AJAX requests to backend services.",
+        "Deployed the application on AWS serverless and EC2 for continuous deployment and integration of application features.",
+        "Implemented Git version control and GitHub Actions to build application features and enable CI/CD.",
+        "Built and integrated RESTful APIs and payment gateway features with PayPal and Stripe."
+      ]
+    },
+    {
+      "name": "Memories Project",
+      "projectName": "MERN",
+      "year": 2022,
+      "technology": [
+        "JavaScript",
+        "Node.js",
+        "ExpressJS",
+        "MongoDB",
+        "React",
+        "Material-UI",
+        "JWT",
+        "React Router DOM",
+        "Axios"
+      ],
+      "description": "Engineered a full-stack application for users to connect and post memorable events as well as interact with one another.",
+      "highlights": [
+        "Used Node.js, Mongoose, and Express to design and set up the server-side application.",
+        "Used RESTful APIs to connect MongoDB Atlas and designed schemas for the project.",
+        "Used React on the client side with Axios and Material-UI to create an interactive UI.",
+        "Used React Router DOM and JSON Web Tokens for user authentication."
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "title": "Software Engineer",
+      "company": "Tunutech",
+      "location": "San Jose, CA",
+      "dates": "Aug 2022 - Present",
+      "responsibilities": [
+        "Provide thoughtful product and design feedback and suggestions based on the roadmap.",
+        "Collaborate with stakeholders to translate complex requirements into technical solutions, improving system design and user experience.",
+        "Develop and deploy scalable, serverless applications on AWS Lambda with CI/CD automation, enhancing cloud infrastructure and delivery pipelines.",
+        "Design and consume scalable APIs and data pipelines in backend services, ensuring robust data flow and integration.",
+        "Build interactive user interfaces using React and Next.js, focusing on responsive and accessible frontend development.",
+        "Implement and manage the full software development lifecycle (SDLC), including rigorous code reviews to maintain high technical standards.",
+        "Debug, test, and maintain robust software application features ensuring seamless code performance."
+      ]
+    },
+    {
+      "title": "Software Engineer",
+      "company": "Stance",
+      "location": "Las Vegas, NV",
+      "dates": "May 2019 - July 2022",
+      "responsibilities": [
+        "Build and maintain full-stack web applications using React.js, React Native, Django, and Node.js.",
+        "Design and implement backend APIs, business logic, and database integrations.",
+        "Collaborate using Git/GitHub workflows such as branching and pull requests.",
+        "Write, test, and debug code across the front end and back end.",
+        "Conduct unit and performance testing to ensure component correctness and system latency goals are met.",
+        "Participate in planning, standups, and code reviews.",
+        "Learn new tools and technologies quickly as project needs evolve.",
+        "Assist with deployments and DevOps tasks as needed."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor's Degree",
+      "field": "International Relations",
+      "school": "Saint Cloud State University",
+      "location": "St. Cloud, MN",
+      "dates": "2008 - 2012"
+    },
+    {
+      "degree": "Full Stack Software Engineer Certificate",
+      "school": "Coding Dojo",
+      "location": "San Jose, CA",
+      "dates": "2019 - 2020"
+    }
+  ]
+}
