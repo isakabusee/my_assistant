@@ -1,125 +1,133 @@
-// components/PortfolioChat.tsx
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEffect, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-
-type Message = {
-  id: string;
-  role: 'user' | 'assistant';
-  text: string;
-};
-
 export default function PortfolioChat() {
-  const [messages, setMessages] = useState<Message[]>([
-    { id: '1', role: 'assistant', text: 'Hi! Ask me anything about my experience, projects, or skills.' }
-  ]);
+  const { messages, sendMessage, status, error, regenerate } = useChat({
+    transport: new DefaultChatTransport({ api: '/api/chat' }),
+  });
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isLoading = status === 'submitted' || status === 'streaming';
 
-  // Auto-scroll to the bottom when new messages arrive
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages]);
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, status, error]);
 
-  const handleSendMessage = async (e: React.SubmitEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const text = input.trim();
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      text: input.trim(),
-    };
+    if (!text || isLoading) return;
 
-    setMessages((prev) => [...prev, userMessage]);
+    sendMessage({ text });
     setInput('');
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage.text }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessages((prev) => [
-          ...prev,
-          { id: (Date.now() + 1).toString(), role: 'assistant', text: data.reply }
-        ]);
-      } else {
-        throw new Error(data.error || 'Failed to fetch reply');
-      }
-    } catch (error) {
-      setMessages((prev) => [
-        ...prev,
-        { id: (Date.now() + 1).toString(), role: 'assistant', text: 'Sorry, I encountered an error. Please try again.' }
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto h-[600px] flex flex-col shadow-lg border-muted">
+    <Card className="mx-auto flex h-[600px] w-full max-w-2xl flex-col border-muted shadow-lg">
       <CardHeader className="border-b bg-muted/20">
         <CardTitle>AI Portfolio Assistant</CardTitle>
-        <CardDescription>Powered by my verified resume data</CardDescription>
+        <CardDescription>
+          Ask about my experience, projects, or skills.
+        </CardDescription>
       </CardHeader>
-      
+
       <CardContent className="flex-1 overflow-hidden p-4">
         <ScrollArea className="h-full pr-4">
-          <div className="space-y-4">
-            {messages.map((msg) => (
+          <div className="space-y-4" role="log" aria-live="polite">
+            {messages.length === 0 && (
+              <div className="flex justify-start">
+                <p className="max-w-[80%] rounded-lg bg-muted px-4 py-2 text-sm text-muted-foreground">
+                  Hi! Ask me anything about my experience, projects, or skills.
+                </p>
+              </div>
+            )}
+
+            {messages.map((message) => (
               <div
-                key={msg.id}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                key={message.id}
+                className={`flex ${
+                  message.role === 'user' ? 'justify-end' : 'justify-start'
+                }`}
               >
                 <div
-                  className={`max-w-[80%] rounded-lg px-4 py-2 text-sm whitespace-pre-line ${
-                    msg.role === 'user'
-                      ? 'bg-primary text-primary-foreground font-medium'
+                  className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${
+                    message.role === 'user'
+                      ? 'bg-primary font-medium text-primary-foreground'
                       : 'bg-muted text-muted-foreground'
                   }`}
                 >
-                  {msg.text}
+                  {message.parts.map((part, index) =>
+                    part.type === 'text' ? (
+                      <span key={`${message.id}-${index}`} className="whitespace-pre-wrap">
+                        {part.text}
+                      </span>
+                    ) : null
+                  )}
                 </div>
               </div>
             ))}
-            {isLoading && (
+
+            {status === 'submitted' && (
               <div className="flex justify-start">
-                <div className="bg-muted text-muted-foreground max-w-[80%] rounded-lg px-4 py-2 text-sm animate-pulse">
+                <p className="max-w-[80%] animate-pulse rounded-lg bg-muted px-4 py-2 text-sm text-muted-foreground">
                   Thinking...
-                </div>
+                </p>
               </div>
             )}
+
             <div ref={scrollRef} />
           </div>
         </ScrollArea>
       </CardContent>
 
-      <CardFooter className="border-t p-4 bg-muted/10">
-        <form onSubmit={handleSendMessage} className="flex w-full items-center space-x-2">
+      {error && (
+        <div className="flex items-center justify-between gap-3 px-4 pb-2">
+          <p className="text-sm text-destructive" role="alert">
+            Something went wrong. Please try again.
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => regenerate()}
+          >
+            Retry
+          </Button>
+        </div>
+      )}
+
+      <CardFooter className="border-t bg-muted/10 p-4">
+        <form onSubmit={handleSubmit} className="flex w-full items-center gap-2">
+          <label className="sr-only" htmlFor="portfolio-chat-input">
+            Ask a question about the portfolio
+          </label>
           <Input
+            id="portfolio-chat-input"
             type="text"
-            placeholder="e.g., What technologies did they use for their last project?"
+            placeholder="e.g., What technologies did they use for their latest project?"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(event) => setInput(event.target.value)}
             disabled={isLoading}
             className="flex-1 focus-visible:ring-primary"
           />
           <Button type="submit" disabled={isLoading || !input.trim()}>
-            Send
+            {isLoading ? 'Sending...' : 'Send'}
           </Button>
         </form>
       </CardFooter>
